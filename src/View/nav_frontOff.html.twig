@@ -1,0 +1,51 @@
+<div class="navbar-wrapper">
+    <div class="container-fluid">
+        <nav class="navbar navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">
+                        <img src="{{ asset('assets/img/')}}logo.png" >
+                    </a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="{{ path('accueil') }}" class="">Accueil</a></li>
+
+                        <li><a href="#">Add New</a></li>
+                        <li class=" dropdown"><a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Boutique <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ path('produit.show') }}">Produits sportifs</a></li>
+                                <li><a href="#">Viande électronique</a></li>
+                            </ul>
+                        </li>
+
+
+                    </ul>
+                    <ul class="nav navbar-nav pull-right">
+                        <li><a href="{{ path('panier.show') }}">Panier</a></li>
+                        <li class=" dropdown"><a href="#" class="dropdown-toggle active" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ app.session.get('username') }}<span class="caret"></span></a>
+
+                        <ul class="dropdown-menu">
+                                <li><a href="{{ path('commande.show') }}">Mes commandes</a></li>
+                                <li><a href="#">Paramètres</a></li>
+                            </ul>
+                        </li>
+                        {% if   app.session.get('logged') is defined and  app.session.get('logged') == 1 %}
+                            <li class=""><a href="{{ path('user.logout') }}">Déconnexion</a></li>
+                        {% else %}
+                            <li class=""><a href="{{ path('user.login') }}">Déconnexion</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+
+

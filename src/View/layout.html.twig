@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/x-icon" href="http://www.iut-bm.univ-fcomte.fr/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>exemple MVC php</title>
+    {#<link rel="stylesheet" href="{{ asset('assets/css/foundation.css') }}" />#}
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}" >
+    <script src="{{ asset('assets/js/vendor/modernizr.js') }}"></script>
+    <link href="{{ asset('assets/css/bootstrap.css') }}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{{ asset('assets/shop-homepage.css') }}" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="{{ asset('assets/js/jquery.js') }}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{{ asset('assets/js/bootstrap.js') }}"></script>
+
+    {#menu#}
+    <link href="{{ asset('assets/css/menu.css') }}" rel="stylesheet">
+
+  </head>
+  <body>
+
+{% if   app.session.get('roles') is defined and  app.session.get('roles') == 'ROLE_ADMIN' %}
+  {% include "nav_backOff.html.twig" %}
+{% elseif   app.session.get('roles') is defined and  app.session.get('roles') == 'ROLE_CLIENT' %}
+  {% include "nav_frontOff.html.twig" %}
+{% else %}
+  {% include "nav_home.html.twig" %}
+{% endif%}
+
+<div class="contenu">
+
+{% block contenu %}
+{% endblock %}
+</div>
+<script src="{{ asset('assets/js/vendor/jquery.js') }}"></script>
+<script src="{{ asset('assets/js/foundation.min.js') }}"></script>
+
+  </body>
+</html>
+
