@@ -1,0 +1,18 @@
+{% extends "layout.html.twig" %}
+{% block contenu %}
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <div class="container">
+        <form method="post" action="{{ path('admin.commande.updateState', { id: id})}}">
+            <div class="row">
+                <h3><i class="fa fa-bars" aria-hidden="true"></i> Changer l'état de la commande </h3>	<br><br>
+                <select name="etats" class="form-control input-lg" data-style="btn-info">
+                    {% for etat in etats if etats is not empty %}
+                    <option value="{{etat.id}}" {% if etat.id == commandes.etat_id %}selected{% endif %}>{{etat.libelle}}</option>
+                    {% endfor %}
+                </select><br><br><br><br>
+                <input type="submit" class="btn btn-warning pull-right" name="modifieretat" value="Valider cet état" />
+            </div>
+        </form>
+    </div>
+{% endblock %}
+

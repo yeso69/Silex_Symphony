@@ -1,0 +1,53 @@
+{% extends "layout.html.twig" %}
+{% block contenu %}
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+	<div class="container">
+
+		<h3><i class="fa fa-bars" aria-hidden="true"></i> Mes commandes</h3>	<br><br>
+
+
+		<table id="cart" class="table table-hover table-condensed">
+			<thead>
+			<tr>
+				<th style="width:10%">N° de commande</th>
+				<th style="width:20%">Date d'achat</th>
+				<th style="width:15%">Montant total</th>
+				<th style="width:15%">Etat</th>
+				<th style="width:15%">Operations</th>
+			</tr>
+			</thead>
+			<tbody>
+
+
+			{% set total = 0 %}
+			{% for commande in commandes if commandes is not empty %}
+			<tr>
+				<td data-th="Product">
+					<div class="row">
+						{#<div class="col-sm-2 hidden-xs"><img src="{{ asset('assets/img/')}}{{ produit.photo }}" class="img-responsive"/></div>#}
+						<div class="col-sm-10">
+							<h4 class="nomargin">{{commande.id}}</h4>
+						</div>
+					</div>
+				</td>
+				<td data-th="Prix">{{commande.date_achat}}</td>
+				<td data-th="Date">{{commande.prix}} €</td>
+				<td data-th="Date">{{commande.libelle}}</td>
+				<td data-th="Operation">
+					<a href="{{ path('admin.commande.showetat', {id: commande.id})}}" class="btn btn-info btn-sm"><i class="fa fa-pencil-square-o"></i></a>
+					<a href="#" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></a>
+				</td>
+			</tr>
+				{#{% set total = total + produit.prix * produit.qte %}#}
+			{% endfor %}
+			</tbody>
+			<tfoot>
+			<tr class="visible-xs">
+				<td class="text-center"><strong>{{ total }}</strong></td>
+			</tr>
+			</tfoot>
+		</table>
+	</div>
+{% endblock %}
+

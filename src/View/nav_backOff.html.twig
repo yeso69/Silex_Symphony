@@ -10,9 +10,9 @@
     <section class="top-bar-section">
       <ul class="left">
         <li class="divider"></li>
-        <li class="has-dropdown"><a href="#">commandes</a>
+        <li class="has-dropdown"><a href="{{ path('admin.commande.index') }}">commandes</a>
           <ul class="dropdown">
-            <li><a href="#"> gestion des commandes </a></li>
+            <li><a href="{{ path('admin.commande.show') }}"> gestion des commandes </a></li>
           </ul>
         </li>
         <li class="has-dropdown"><a href="#">produit</a>

@@ -26,6 +26,18 @@ class CommandeModel {
         return $queryBuilder->execute()->fetchAll();
 
     }
+    public function getAllCommande() {
+        $queryBuilder = new QueryBuilder($this->db);
+        $queryBuilder
+            ->select('c.id', 'c.prix', 'c.date_achat', 'c.etat_id', 'e.libelle')
+            ->from('commandes', 'c')
+            ->addOrderBy('c.date_achat', 'DESC')
+            ->innerJoin('c', 'etats', 'e', 'c.etat_id=e.id');
+
+        return $queryBuilder->execute()->fetchAll();
+
+    }
+
 
     public function insertCommande($donnees) {
         $queryBuilder = new QueryBuilder($this->db);
@@ -64,7 +76,17 @@ class CommandeModel {
             ->where('c.id= :id')
             ->innerJoin('c', 'etats', 'e', 'c.etat_id=e.id')
             ->setParameter('id', $id);
-        return $queryBuilder->execute()->fetchAll();
+        return $queryBuilder->execute()->fetchAll()[0];
+    }
+    public function updateStateCommande($id,$etat_id) {
+        $queryBuilder = new QueryBuilder($this->db);
+        $queryBuilder
+            ->update('commandes')
+            ->set('etat_id', '?')
+            ->where('id= ?')
+            ->setParameter(0, $etat_id)
+            ->setParameter(1, $id);
+        return $queryBuilder->execute();
     }
 
     public function updateProduit($donnees) {
