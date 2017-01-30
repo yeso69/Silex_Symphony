@@ -49,13 +49,26 @@ class ProduitModel {
     function getProduit($id) {
         $queryBuilder = new QueryBuilder($this->db);
         $queryBuilder
-            ->select('p.id', 't.libelle', 'p.typeProduit_id', 'nom', 'prix', 'photo')
+            ->select('p.id', 't.libelle', 'p.typeProduit_id', 'nom', 'prix', 'photo', 'stock')
             ->from('produits', 'p')
             ->where('p.id= :id')
             ->innerJoin('p', 'typeProduits', 't', 'p.typeProduit_id=t.id')
             ->setParameter('id', $id);
         return $queryBuilder->execute()->fetch();
     }
+
+    function changeStock($produit) {
+        $queryBuilder = new QueryBuilder($this->db);
+        $queryBuilder
+            ->update('produits')
+            ->set('stock', '?')
+            ->where('id= ?')
+            ->setParameter(0, $produit['stock'])
+            ->setParameter(1, $produit['id']);
+        return $queryBuilder->execute();
+    }
+
+
 
     public function updateProduit($donnees) {
         $queryBuilder = new QueryBuilder($this->db);

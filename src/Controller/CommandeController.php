@@ -59,27 +59,27 @@ class CommandeController implements ControllerProviderInterface
     }
 
 
+    public function showDetails(Application $app, $id){
+        $this->commandeModel = new CommandeModel($app);
+        $this->panierModel = new PanierModel($app);
+
+        $commande = $this->commandeModel->getCommande($id);
+
+        $paniers = $this->panierModel->getAllPanier($id); //recup des paniers
+//        var_dump($commande);die;
+        return $app["twig"]->render('frontOff/Commande/detail.html.twig',['commande'=>$commande, 'produits'=>$paniers]);
+
+    }
+
         public function show(Application $app) {
             $this->commandeModel = new CommandeModel($app);
             $this->panierModel = new PanierModel($app);
 
             //recupération des commandes de l'utilisateur
             $commandes = $this->commandeModel->getAllCommandes($app['session']->get('user_id'));
-            //var_dump($commandes);die;
-            // boucle qui va recupérer les infos des produits dans le panier
-            $produits = array();
-            //var_dump($commandes);
-            $index = 0;
-            foreach ($commandes as $commande){
-                $id = $commande['id'];//recup de l'id commande
-                $paniers = $this->panierModel->getAllPanier($id);
-                $commandes[$index]['qte'] = count($paniers);
-                $commandes[$index]['produits'] = $paniers;
-                $produits[$id] = $paniers;
-                $index++;
-            }
+
 //            var_dump( $commandes[$index]);die;
-            return $app["twig"]->render('frontOff/Commande/show.html.twig',['produits'=>$produits, 'commandes'=>$commandes]);
+            return $app["twig"]->render('frontOff/Commande/show.html.twig',['commandes'=>$commandes]);
         }
 
 
@@ -101,6 +101,8 @@ class CommandeController implements ControllerProviderInterface
             $produit = $this->produitModel->getProduit($id);
             $produit['produit_id'] = $id;//format pr le model
             $produit['quantite'] = $qte;
+            $produit['stock'] -= $qte;
+            $this->produitModel->changeStock($produit);
             array_push($produits, $produit);//ajout du produit dans le tableau
             $total += $qte * $produit['prix'];
         }
@@ -131,6 +133,8 @@ class CommandeController implements ControllerProviderInterface
 
         $controllers->get('/', 'App\Controller\commandeController::index')->bind('commande.index');
         $controllers->get('/show', 'App\Controller\commandeController::show')->bind('commande.show');
+        $controllers->get('/show/{id}', 'App\Controller\commandeController::showDetails')->bind('commande.detail');
+
 //        $controllers->post('/update', 'App\Controller\panierController::update')->bind('panier.update');
 //        $controllers->get('/remove/{id}', 'App\Controller\panierController::remove')->bind('panier.remove');
         $controllers->get('/add', 'App\Controller\commandeController::add')->bind('commande.add');

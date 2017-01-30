@@ -56,14 +56,14 @@ class CommandeModel {
         return $commande['id'];
     }
 
-    public function getPanier($id) {
+    public function getCommande($id) {
         $queryBuilder = new QueryBuilder($this->db);
         $queryBuilder
-            ->select('p.id', 't.quantite', 'p.prix', 'p.dateAjoutPanier', 'u.username', 'pr.nom', 'p.commande_id')
-            ->from('paniers', 'p')
-            ->innerJoin('p', 'users', 'u', 'p.user_id=u.username')
-            ->innerJoin('p', 'produits', 'pr', 'p.produit_id=pr.nom')
-            ->where('commande_id= :id');
+            ->select('c.id', 'c.prix', 'c.date_achat', 'c.etat_id', 'e.libelle')
+            ->from('commandes', 'c')
+            ->where('c.id= :id')
+            ->innerJoin('c', 'etats', 'e', 'c.etat_id=e.id')
+            ->setParameter('id', $id);
         return $queryBuilder->execute()->fetchAll();
     }
 
