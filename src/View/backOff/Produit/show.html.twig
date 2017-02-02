@@ -1,14 +1,12 @@
 {% extends "layout.html.twig" %}
 {% block contenu %}
-	<div class="row">
-		{% if   app.session.get('droit') is defined and  app.session.get('droit') == 'DROITadmin' %}
+	<div class="container">
 			<a href="{{ path('produit.add') }}"> Ajouter un produit </a>
-		{% endif %}
 
-		<table>
+		<table class="table">
 			<caption>Recapitulatifs des produits (avec twig)</caption>
 			<thead>
-			<tr><th>nom</th><th>id</th><th>type</th><th>prix</th><th>nom photo</th><th>photo</th><th>Ajouté le produit au panier</th>
+			<tr><th>nom</th><th>id</th><th>type</th><th>prix</th><th>photo</th><th>Ajouté le produit au panier</th>
 				{% if   app.session.get('droit') is defined and  app.session.get('droit') == 'DROITadmin' %}
 					<th>opération</th>
 				{% endif %}
@@ -19,10 +17,10 @@
 
 				<tr>
 					<td>{{produit.nom}}</td><td>{{produit.id}}</td><td>{{produit.libelle}}</td><td>{{produit.prix}}</td><td>
-						{{produit.photo}}</td><td>
-						<img style="width:40px;height:40px" src="{{asset('images/')}}{{produit.photo}}" alt="image de {{produit.libelle}}" >
+						<img style="width:40px;height:40px" src="{{asset('assets/img/')}}{{produit.photo}}" alt="image de {{produit.libelle}}" >
 					</td>
-					<td><a href="{{ path('panier.add', {id: produit.id}) }}"> Ajouter un produit </a></td>
+					<td><a href="{{ path('admin.produit.edit', {id: produit.id})}}" class="btn btn-info btn-sm"><i class="fa fa-pencil-square-o"></i></a>
+						<a href="{{ path('admin.produit.delete', {id: produit.id})}}" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></a></td>
 				</tr>
 			{% endfor %}
 			<tbody>

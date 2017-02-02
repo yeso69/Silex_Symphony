@@ -7,3 +7,4 @@ $app->mount("/panier", new App\Controller\PanierController($app));
 $app->mount("/commande", new App\Controller\CommandeController($app));
 $app->mount("/connexion", new App\Controller\UserController($app));
 $app->mount("/admin/commande", new App\Controller\admin\CommandeController($app));
+$app->mount("/admin/produit", new App\Controller\admin\ProduitController($app));
