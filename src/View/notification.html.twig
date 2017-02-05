@@ -1,0 +1,23 @@
+
+{% for alert in app.session.flashbag.get('notifications')  %}
+    <div class="noty-holder">
+        <div class="alert alert-{{ alert.type }} alert-dismissable page-alert">
+            <button type="button" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+            {% if   alert.type  == "info" %}
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
+            {% elseif   alert.type  == "success" %}
+                <i class="fa fa-check-circle" aria-hidden="true"></i>
+            {% elseif   alert.type  == "warning" %}
+                <i class="fa fa-warning" aria-hidden="true"></i>
+            {% elseif   alert.type  == "danger" %}
+                <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+            {% endif %}
+
+            {{ alert.message }}
+        </div>
+    </div>
+    {# info/success/warning/danger #}
+
+{% endfor %}
+
+

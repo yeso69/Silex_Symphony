@@ -55,6 +55,25 @@ Request::enableHttpMethodParameterOverride();
 //validator      => php composer.phar  require symfony/validator
 $app->register(new Silex\Provider\ValidatorServiceProvider());
 
+//security
+$app->register(new Silex\Provider\SecurityServiceProvider(), array(
+    'security.firewalls' => array(
+        'login' => array('pattern' => '^/login'), // Exemple d'une url accessible en mode non connecté
+        'default' => array(
+            'pattern' => '^/admin/  ',
+            'form' => array('login_path' => '/connexion/login'),
+            'users' => array(
+                'admin' => array('role', 'ROLE_ADMIN'),
+            ),
+        ),
+    ),
+    'security.access_rules' => array(
+        // ROLE_USER est défini arbitrairement, vous pouvez le remplacer par le nom que vous voulez
+        array('^/.+$', 'ROLE_USER'),
+        array('^/foo$', ''), // Cette url est accessible en mode non connecté
+    )
+));
+
 // Montage des controleurs sur le routeur
 include('routing.php');
 

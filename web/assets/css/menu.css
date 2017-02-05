@@ -1,11 +1,12 @@
 body{
-    background: #F7F7F7;
+    background: #ffffff;
 }
 .navbar, .dropdown-menu{
 background:rgba(153,153,153,0.75);
 border: none;
 
 }
+
 
 .nav>li>a, .dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover, .dropdown-menu>li>a, .dropdown-menu>li{
   border-bottom: 3px solid transparent;

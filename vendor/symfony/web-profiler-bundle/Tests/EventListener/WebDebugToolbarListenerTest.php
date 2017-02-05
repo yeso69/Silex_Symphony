@@ -12,6 +12,7 @@
 namespace Symfony\Bundle\WebProfilerBundle\Tests\EventListener;
 
 use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener;
+use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -31,7 +32,7 @@ class WebDebugToolbarListenerTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response($content);
 
-        $m->invoke($listener, $response, Request::create('/'));
+        $m->invoke($listener, $response, Request::create('/'), array('csp_script_nonce' => 'scripto', 'csp_style_nonce' => 'stylo'));
         $this->assertEquals($expected, $response->getContent());
     }
 
@@ -246,11 +247,7 @@ class WebDebugToolbarListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function getRequestMock($isXmlHttpRequest = false, $requestFormat = 'html', $hasSession = true)
     {
-        $request = $this->getMock(
-            'Symfony\Component\HttpFoundation\Request',
-            array('getSession', 'isXmlHttpRequest', 'getRequestFormat'),
-            array(), '', false
-        );
+        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')->setMethods(array('getSession', 'isXmlHttpRequest', 'getRequestFormat'))->disableOriginalConstructor()->getMock();
         $request->expects($this->any())
             ->method('isXmlHttpRequest')
             ->will($this->returnValue($isXmlHttpRequest));
@@ -258,8 +255,10 @@ class WebDebugToolbarListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getRequestFormat')
             ->will($this->returnValue($requestFormat));
 
+        $request->headers = new HeaderBag();
+
         if ($hasSession) {
-            $session = $this->getMock('Symfony\Component\HttpFoundation\Session\Session', array(), array(), '', false);
+            $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')->disableOriginalConstructor()->getMock();
             $request->expects($this->any())
                 ->method('getSession')
                 ->will($this->returnValue($session));
@@ -270,7 +269,7 @@ class WebDebugToolbarListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function getTwigMock($render = 'WDT')
     {
-        $templating = $this->getMock('Twig_Environment', array(), array(), '', false);
+        $templating = $this->getMockBuilder('Twig_Environment')->disableOriginalConstructor()->getMock();
         $templating->expects($this->any())
             ->method('render')
             ->will($this->returnValue($render));
@@ -280,11 +279,11 @@ class WebDebugToolbarListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function getUrlGeneratorMock()
     {
-        return $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        return $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGeneratorInterface')->getMock();
     }
 
     protected function getKernelMock()
     {
-        return $this->getMock('Symfony\Component\HttpKernel\Kernel', array(), array(), '', false);
+        return $this->getMockBuilder('Symfony\Component\HttpKernel\Kernel')->disableOriginalConstructor()->getMock();
     }
 }

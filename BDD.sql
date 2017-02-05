@@ -75,6 +75,12 @@ CREATE TABLE users (
   motdepasse VARCHAR(255) NOT NULL DEFAULT '',
   roles VARCHAR(255) NOT NULL DEFAULT '',
   email  VARCHAR(255) NOT NULL DEFAULT '',
+  nom VARCHAR(100) NOT NULL DEFAULT '',
+  prenom VARCHAR(100) NOT NULL DEFAULT '',
+  ville VARCHAR(100) NOT NULL DEFAULT '',
+  adresse VARCHAR(100) NOT NULL DEFAULT '',
+  cp NUMERIC () NOT NULL DEFAULT '',
+
   isEnabled TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_username` (`username`)

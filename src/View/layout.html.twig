@@ -19,10 +19,20 @@
     <script src="{{ asset('assets/js/bootstrap.js') }}"></script>
 
     {#menu#}
-    <link href="{{ asset('assets/css/menu.css') }}" rel="stylesheet">
+    {% if   app.session.get('roles') is defined and  app.session.get('roles') == 'ROLE_ADMIN' %}
+      <link href="{{ asset('assets/css/menu_admin.css') }}" rel="stylesheet">
+    {% else %}
+      <link href="{{ asset('assets/css/menu.css') }}" rel="stylesheet">
+    {% endif%}
 
+    <link href="{{ asset('assets/css/notification.css') }}" rel="stylesheet">
+    <script src="{{ asset('assets/js/notification.js') }}"></script>
+
+    {% block cssJs %}
+    {% endblock %}
   </head>
   <body>
+  {% include "notification.html.twig" %}
 
 {% if   app.session.get('roles') is defined and  app.session.get('roles') == 'ROLE_ADMIN' %}
   {% include "nav_backOff.html.twig" %}
@@ -31,6 +41,7 @@
 {% else %}
   {% include "nav_home.html.twig" %}
 {% endif%}
+
 
 <div class="contenu">
 

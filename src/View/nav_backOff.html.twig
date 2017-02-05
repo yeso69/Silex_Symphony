@@ -1,39 +1,53 @@
-<nav class="top-bar" data-topbar role="navigation">
-    <ul class="title-area"> 
-      <li class="name"> 
-        <h1> <a href="">TP web<span style="color:#ff0000;"> menu avec twig</span></a></h1>
-      </li> 
-      <li class="toggle-topbar menu-icon">
-        <a href="#"><span>Menu</span></a>
-      </li> 
-    </ul> 
-    <section class="top-bar-section">
-      <ul class="left">
-        <li class="divider"></li>
-        <li class="has-dropdown"><a href="{{ path('admin.commande.index') }}">commandes</a>
-          <ul class="dropdown">
-            <li><a href="{{ path('admin.commande.show') }}"> gestion des commandes </a></li>
-          </ul>
-        </li>
-        <li class="has-dropdown"><a href="#">produit</a>
-          <ul class="dropdown">
-            <li><a href="{{ path('admin.produit.add') }}"> créer un produit </a></li>
-            <li><a href="{{ path('admin.produit.show') }}">afficher/editer/supprimer les produits</a></li>
-          </ul>
-        </li>
-        <li class="has-dropdown"><a href="#">clients</a>
-          <ul class="dropdown">
-            <li><a href="#"> gestion des clients </a></li>
-          </ul>
-        </li>
-      </ul>
-        <ul class="right">
-            {% if   app.session.get('logged') is defined and  app.session.get('logged') == 1 %}
-                <li class="name" style="color: #d58512">Connecté en tant que : {{ app.session.get('username') }}</li>
-                <li><a href="{{ path('user.logout')  }}">Se déconnecter</a></li>
-            {% else %}
-                <li><a href="{{ path('user.login')  }}">Se connecter</a></li>
-            {% endif %}
-        </ul>
-    </section> 
-</nav>
+
+<div class="navbar-wrapper">
+    <div class="container-fluid">
+        <nav class="navbar navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">
+                        <img src="{{ asset('assets/img/')}}logo-admin.png" >
+                    </a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="{{ path('admin.commande.index') }}">Commandes</a></li>
+
+                        <li class=" dropdown"><a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Produits <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ path('admin.produit.add') }}"> Ajouter un produit </a></li>
+                                <li><a href="{{ path('admin.produit.show') }}">Gérer les produits</a></li>
+                            </ul>
+                        </li>
+
+
+                    </ul>
+                    <ul class="nav navbar-nav pull-right">
+                        <li><a href="{{ path('produit.show') }}" class=""><i class="fa fa-home" aria-hidden="true"></i>Boutique</a></li>
+                        <li><a href="{{ path('panier.show') }}"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Panier</a></li>
+                        <li class=" dropdown">
+                            <a href="#" class="dropdown-toggle active" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user-circle" aria-hidden="true"></i> {{ app.session.get('username') }}<span class="caret"></span></a>
+
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ path('commande.show') }}"><i class="fa fa-bars" aria-hidden="true"></i> Mes commandes</a></li>
+                                <li><a href="#"><i class="fa fa-address-card" aria-hidden="true"></i> Mon compte</a></li>
+                            </ul>
+                        </li>
+                        {% if   app.session.get('logged') is defined and  app.session.get('logged') == 1 %}
+                            <li class=""><a href="{{ path('user.logout') }}">Déconnexion <i class="fa fa-sign-out" aria-hidden="true"></i></a></li>
+                        {% else %}
+                            <li class=""><a href="{{ path('user.login') }}">Se connecter</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+
+

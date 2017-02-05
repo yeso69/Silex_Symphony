@@ -42,6 +42,8 @@ class PanierController implements ControllerProviderInterface
                 $app['session']->set('panier',$panier);
             }
         }
+        $app['session']->getFlashBag()->add('notifications',
+            array('type' => 'info', 'message' =>'Quantité mise à jour.'));
         return $app->redirect($app["url_generator"]->generate("panier.show"));
     }
 
@@ -51,7 +53,8 @@ class PanierController implements ControllerProviderInterface
             unset($panier[$id]);//on enlève le produit du panier en session
             $app['session']->set('panier',$panier);
         }
-
+        $app['session']->getFlashBag()->add('notifications',
+            array('type' => 'info', 'message' =>'Ce produit n\'est plsu dans votre panier.'));
         return $app->redirect($app["url_generator"]->generate("panier.show"));
     }
 

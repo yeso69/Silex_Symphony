@@ -20,14 +20,29 @@ class UserModel {
 		else
 			return false;
 	}
-	// public function verif_login_mdp_Utilisateur($login,$mdp){
-	// 	$sql = "SELECT id,login,password,droit FROM users WHERE login = ? AND password = ?";
-	// 	$res=$this->db->executeQuery($sql,[$login,$mdp]);   //md5($mdp);
-	// 	if($res->rowCount()==1)
-	// 		return $res->fetch();
-	// 	else
-	// 		return false;
-	// }
+
+    public function insertUser($donnees) {
+        $queryBuilder = new QueryBuilder($this->db);
+        $queryBuilder->insert('users')
+            ->values([
+                'username' => '?',
+                'password' => '?',
+                'motdepasse' => '?',
+                'roles' => '?',
+                'email' => '?',
+                'isEnabled' => '?',
+
+
+            ])
+            ->setParameter(0, $donnees['username'])
+            ->setParameter(1, $donnees['password'])
+            ->setParameter(2, $donnees['motdepasse'])
+            ->setParameter(3, "ROLE_CLIENT")
+            ->setParameter(4, $donnees['email'])
+            ->setParameter(5, true)
+        ;
+        return $queryBuilder->execute();
+    }
 
 	public function getUser($user_id) {
 		$queryBuilder = new QueryBuilder($this->db);

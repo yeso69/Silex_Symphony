@@ -29,7 +29,9 @@
                     </ul>
                     <ul class="nav navbar-nav pull-right">
                         <li><a href="{{ path('panier.show') }}"><i class="fa fa-shopping-basket" aria-hidden="true"></i> Panier</a></li>
-                        <li class=" dropdown">
+                        {% if   app.session.get('logged') is defined and  app.session.get('logged') == 1 %}
+
+                            <li class=" dropdown">
                             <a href="#" class="dropdown-toggle active" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user-circle" aria-hidden="true"></i> {{ app.session.get('username') }}<span class="caret"></span></a>
 
                             <ul class="dropdown-menu">
@@ -37,7 +39,6 @@
                                     <li><a href="#"><i class="fa fa-address-card" aria-hidden="true"></i> Mon compte</a></li>
                             </ul>
                         </li>
-                        {% if   app.session.get('logged') is defined and  app.session.get('logged') == 1 %}
                             <li class=""><a href="{{ path('user.logout') }}">Déconnexion <i class="fa fa-sign-out" aria-hidden="true"></i></a></li>
                         {% else %}
                             <li class=""><a href="{{ path('user.login') }}">Se connecter</a></li>

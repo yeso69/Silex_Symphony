@@ -1,0 +1,52 @@
+{% extends "layout.html.twig" %}
+
+{% block cssJs %}
+    <link rel="stylesheet" href="{{ asset('assets/css/login.css') }}">
+    <script src="{{ asset('assets/js/login.js') }}"></script>
+{% endblock %}
+
+{% block contenu %}
+
+
+    <div class="container">
+
+        <div class="row" id="pwd-container">
+            <div class="col-md-4"></div>
+
+            <div class="col-md-4">
+                <section class="login-form">
+
+                    <form action="{{ path('user.validInscription') }}" method="post" role="login">
+                        <img  src="{{ asset('assets/img/logo.png') }}" class="img-responsive" alt="" />
+                        {{ form_widget(form) }}
+                        <div class="pwstrength_viewport_progress"></div>
+                        <button type="submit" name="go" class="btn btn-lg btn-primary btn-block">Créer mon compte</button>
+
+                    </form>
+
+                    <div class="form-links">
+                        <a href="#">Créez votre compte en quelques secondes !</a>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="col-md-4"></div>
+
+
+        </div>
+
+        <p>
+            <a href="http://validator.w3.org/check?uri=http%3A%2F%2Fbootsnipp.com%2Fiframe%2FW00op" target="_blank"><small>HTML</small><sup>5</sup></a>
+            <br>
+            <br>
+
+        </p>
+
+
+    </div>
+
+
+
+
+{% endblock %}

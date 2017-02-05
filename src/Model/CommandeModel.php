@@ -24,7 +24,6 @@ class CommandeModel {
             ->setParameter('id', $user_id);
 
         return $queryBuilder->execute()->fetchAll();
-
     }
     public function getAllCommande() {
         $queryBuilder = new QueryBuilder($this->db);

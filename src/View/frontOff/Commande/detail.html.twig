@@ -1,6 +1,11 @@
 {% extends "layout.html.twig" %}
-{% block contenu %}
+
+{% block cssJs %}
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+{% endblock %}
+
+
+{% block contenu %}
 	<div class="container">
 		<h3><i class="fa fa-check-square-o" aria-hidden="true"></i> Récapitulatif de la commande N° {{ commande.id }}</h3><br><br>
 

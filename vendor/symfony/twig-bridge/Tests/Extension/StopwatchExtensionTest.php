@@ -42,7 +42,7 @@ class StopwatchExtensionTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array('{% stopwatch "foo" %}something{% endstopwatch %}', 'foo'),
-            array('{% stopwatch "foo" %}symfony2 is fun{% endstopwatch %}{% stopwatch "bar" %}something{% endstopwatch %}', array('foo', 'bar')),
+            array('{% stopwatch "foo" %}symfony is fun{% endstopwatch %}{% stopwatch "bar" %}something{% endstopwatch %}', array('foo', 'bar')),
             array('{% set foo = "foo" %}{% stopwatch foo %}something{% endstopwatch %}', 'foo'),
             array('{% set foo = "foo" %}{% stopwatch foo %}something {% set foo = "bar" %}{% endstopwatch %}', 'foo'),
             array('{% stopwatch "foo.bar" %}something{% endstopwatch %}', 'foo.bar'),
@@ -53,7 +53,7 @@ class StopwatchExtensionTest extends \PHPUnit_Framework_TestCase
     protected function getStopwatch($events = array())
     {
         $events = is_array($events) ? $events : array($events);
-        $stopwatch = $this->getMock('Symfony\Component\Stopwatch\Stopwatch');
+        $stopwatch = $this->getMockBuilder('Symfony\Component\Stopwatch\Stopwatch')->getMock();
 
         $i = -1;
         foreach ($events as $eventName) {

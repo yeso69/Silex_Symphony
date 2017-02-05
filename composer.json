@@ -2,10 +2,15 @@
     "require": {
     	"silex/silex": "~2.0",
         "twig/twig": "^1.25",
-        "symfony/twig-bridge": "^3.1",
+        "symfony/twig-bridge": "^3.2",
         "doctrine/dbal": "^2.5",
-        "symfony/validator": "^3.1",
+        "symfony/validator": "^3.2",
         "silex/web-profiler": "^2.0",
-        "symfony/asset": "~3.1"
+        "symfony/asset": "~3.1",
+        "symfony/form": "^3.2",
+        "symfony/config": "^3.2",
+        "symfony/translation": "^3.2",
+        "friendsofsymfony/user-bundle": "~2.0@dev",
+        "symfony/security": "^3.2"
     }
 }
