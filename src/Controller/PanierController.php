@@ -82,7 +82,7 @@ class PanierController implements ControllerProviderInterface
     }
 
 
-    public function add(Application $app, $id) {
+    public function add(Application $app, $id, Request $req) {
         $panier = $app['session']->get('panier');
 
         if($panier == null){
@@ -102,7 +102,7 @@ class PanierController implements ControllerProviderInterface
 
         $app['session']->set('panier',$panier);
         //var_dump($panier);die();
-        return $app->redirect($app["url_generator"]->generate("produit.show"));
+        return $app->redirect($req->headers->get('referer'));
     }
 
     public function connect(Application $app) {  //http://silex.sensiolabs.org/doc/providers.html#controller-providers

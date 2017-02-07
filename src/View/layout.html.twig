@@ -36,10 +36,8 @@
 
 {% if   app.session.get('roles') is defined and  app.session.get('roles') == 'ROLE_ADMIN' %}
   {% include "nav_backOff.html.twig" %}
-{% elseif   app.session.get('roles') is defined and  app.session.get('roles') == 'ROLE_CLIENT' %}
-  {% include "nav_frontOff.html.twig" %}
 {% else %}
-  {% include "nav_home.html.twig" %}
+  {% include "nav_frontOff.html.twig" %}
 {% endif%}
 
 
