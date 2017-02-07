@@ -1,11 +1,11 @@
 {% extends "layout.html.twig" %}
 {% block contenu %}
 	<div class="container">
-
-	<form method="post" action="{{ path("admin.produit.validFormEdit", {id: donnees.id}) }}">
-		<div class="form-group">
-			<fieldset>
-				<legend>Modifier un joueur </legend>
+        {{ form_widget(form) }}
+	{#<form method="post" action="{{ path("admin.produit.validFormEdit", {id: donnees.id}) }}">#}
+		{#<div class="form-group">#}
+			{#<fieldset>#}
+				{#<legend>Modifier un joueur </legend>#}
                 {#{% if errors is defined %}#}
 					{#<div data-alert class="alert-box alert round">#}
 
@@ -17,45 +17,33 @@
 					{#</div>#}
                 {#{% endif %}#}
 				{#<input name="token"  type="hidden"  value="{{ token }}"/>#}
-				<input name="id"  type="hidden" value="{{donnees.id}}" />
-				<div class="form-group">
-					<label for="formGroupExampleInput">Nom :</label>
-					<input type="text" name="nom" class="form-control" id="formGroupExampleInput" value="{{donnees.nom}}">
-                    {% if erreurs.nom is defined %}
-						<small class="error">{{erreurs.nom}}</small>
-                    {% endif %}
-				</div>
-				<div class="form-group">
-					<label for="formGroupExampleInput2">Prix</label>
-					<input type="text" name="prix" class="form-control" id="formGroupExampleInput2" value="{{donnees.prix}}">
-                    {% if erreurs.prix is defined %}
-						<small class="error">{{erreurs.prix}}</small>
-                    {% endif %}
-				</div>
-				<div class="form-group">
-					<label for="formGroupExampleInput">Photo :</label>
-					<input type="text" name="photo" class="form-control" id="formGroupExampleInput" value="{{donnees.photo}}">
-                    {% if erreurs.photo is defined %}
-						<small class="error">{{erreurs.photo}}</small>
-                    {% endif %}
-				</div>
-				<div class="form-group">
-					<label for="formGroupExampleInput2">Type de produits</label>
-					<select nam class="form-control input-lg" name="idclubjoueur">
-                        {% for typeProduit in typeProduits %}
-							<option value="{{ typeProduit.id }}"
-                                    {% if typeProduit.id == donnees.typeProduit_id %}selected{% endif %}>
-                                {{ typeProduit.libelle }}
-							</option>
-                        {% endfor %}
-					</select>
-                    {% if erreurs.typeProduit_id is defined %}
-						<small class="error">{{erreurs.typeProduit_id}}</small>
-                    {% endif %}
-				</div>
-				<input type="submit" name="modifierProduit" value="Modifier" />
-			</fieldset>
-		</div>
-	</form>
+				{#<input name="id"  type="hidden" value="{{donnees.id}}" />#}
+				{#<div class="form-group">#}
+					{#<label for="formGroupExampleInput">Nom :</label>#}
+					{#<input type="text" name="nom" class="form-control" id="formGroupExampleInput" value="{{donnees.nom}}">#}
+				{#</div>#}
+				{#<div class="form-group">#}
+					{#<label for="formGroupExampleInput2">Prix</label>#}
+					{#<input type="text" name="prix" class="form-control" id="formGroupExampleInput2" value="{{donnees.prix}}">#}
+				{#</div>#}
+				{#<div class="form-group">#}
+					{#<label for="formGroupExampleInput">Photo :</label>#}
+					{#<input type="text" name="photo" class="form-control" id="formGroupExampleInput" value="{{donnees.photo}}">#}
+				{#</div>#}
+				{#<div class="form-group">#}
+					{#<label for="formGroupExampleInput2">Type de produits</label>#}
+					{#<select nam class="form-control input-lg" name="typeProduit_id">#}
+                        {#{% for typeProduit in typeProduits %}#}
+							{#<option value="{{ typeProduit.id }}"#}
+                                    {#{% if typeProduit.id == donnees.typeProduit_id %}selected{% endif %}>#}
+                                {#{{ typeProduit.libelle }}#}
+							{#</option>#}
+                        {#{% endfor %}#}
+					{#</select>#}
+				{#</div>#}
+				{#<input type="submit" name="modifierProduit" value="Modifier" />#}
+			{#</fieldset>#}
+		{#</div>#}
+	{#</form>#}
 	</div>
 {% endblock %}

@@ -1,4 +1,5 @@
 
+<script src="{{ asset('assets/js/CssAlert.js') }}"></script>
 <div class="navbar-wrapper">
     <div class="container-fluid">
         <nav class="navbar navbar-fixed-top">
@@ -20,8 +21,8 @@
 
                         <li class=" dropdown"><a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Produits <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="{{ path('admin.produit.add') }}"> Ajouter un produit </a></li>
-                                <li><a href="{{ path('admin.produit.show') }}">Gérer les produits</a></li>
+                                <li><a href="{{ path('admin.produit.validFormAdd') }}"> Ajouter un produit </a></li>
+                                <li><a  id="produ" href="{{ path('admin.produit.show') }}">Gérer les produits</a></li>
                             </ul>
                         </li>
 

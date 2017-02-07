@@ -1,7 +1,7 @@
 {% extends "layout.html.twig" %}
 {% block contenu %}
 	<div class="container">
-			<a href="{{ path('produit.add') }}"> Ajouter un produit </a>
+			<a href="{{ path('admin.produit.validFormAdd') }}"> Ajouter un produit </a>
 
 		<table class="table">
 			<caption>Recapitulatifs des produits (avec twig)</caption>
@@ -15,7 +15,7 @@
 			<tbody>
 			{% for produit in data if data is not empty %}
 
-				<tr>
+				<tr class="prod" {% if produit.stock < 5 %}style="background-color: orange" {% endif %} >
 					<td>{{produit.nom}}</td><td>{{produit.id}}</td><td>{{produit.libelle}}</td><td>{{produit.prix}}</td><td>
 						<img style="width:40px;height:40px" src="{{asset('assets/img/')}}{{produit.photo}}" alt="image de {{produit.libelle}}" >
 					</td>

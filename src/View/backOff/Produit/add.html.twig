@@ -1,45 +1,55 @@
 {% extends "layout.html.twig" %}
 {% block contenu %}
-<form method="post" action="{{ path('produit.validFormAdd') }}">
-    <div class="row">
-        <fieldset>
-            <legend>Creer un produit (twig)</legend>
-            <label>Nom :
-                <input name="nom"  type="text"  size="18" value="{{donnees.nom|default('')}}" />
-                {% if erreurs.nom is defined %}
-                    <small class="error">{{erreurs.nom}}</small>
-                {% endif %}
-            </label>
-            <label>Type :
-                <select name="typeProduit_id">
-                    {% if  donnees.typeProduit_id is not defined or donnees.typeProduit_id is empty   %}
-                        <option value="">Veuillez sélectionner un produit</option>
-                    {% endif %}
-                    {% for typeProduit in typeProduits %}
-                        <option value="{{ typeProduit.id }}"
-                                {% if donnees.typeProduit_id is defined and typeProduit.id == donnees.typeProduit_id %}selected{% endif %}>
-                            {{ typeProduit.libelle }}
-                        </option>
-                    {% endfor %}
-                    </select>
-                {% if erreurs.typeProduit_id is defined %}
-                    <small class="error">{{erreurs.typeProduit_id}}</small>
-                {% endif %}
-            </label>
-            <label>Prix
-                <input name="prix"  type="text"  size="18" 	value="{{donnees.prix|default('')}}"/>
-                {% if erreurs.prix is defined %}
-                    <small class="error">{{erreurs.prix}}</small>
-                {% endif %}
-            </label>
-            <label>Photo
-                <input name="photo"  type="text"  size="18" value="{{donnees.photo|default('')}}"/>
-                {% if erreurs.photo is defined %}
-                    <small class="error">{{erreurs.photo}}</small>
-                {% endif %}
-            </label>
-            <input type="submit" name="creerProduit" value="créer" />
-        </fieldset>
-    </div>
-</form>
+    <form action="#" method="post">
+        {{ form_errors(form) }}
+
+        {{ form_errors(form.nom) }}
+        {{ form_label(form.nom) }}
+        {{ form_widget(form.nom, {'attr': {'placeholder': 'nom'} }) }}
+
+        {{ form_errors(form.typeProduit_id) }}
+        {{ form_label(form.typeProduit_id) }}
+        {{ form_widget(form.typeProduit_id, {'attr': {'placeholder': 'typeProduit_id'} }) }}
+
+        {{ form_errors(form.prix) }}
+        {{ form_label(form.prix) }}
+        {{ form_widget(form.prix, {'attr': {'placeholder': 'prix'} }) }}
+
+        {{ form_errors(form.photo) }}
+        {{ form_label(form.photo) }}
+        {{ form_widget(form.photo, {'attr': {'placeholder': 'photo'} }) }}
+
+        {{ form_rest(form) }}
+        <input type="submit" name="submit" />
+    </form>
+{#<form method="post" action="{{ path('produit.validFormAdd') }}">#}
+    {#<div class="row">#}
+        {#<fieldset>#}
+            {#<legend>Creer un produit (twig)</legend>#}
+            {#<label>Nom :#}
+                {#<input name="nom"  type="text"  size="18" value="{{donnees.nom|default('')}}" />#}
+            {#</label>#}
+            {#<label>Type :#}
+                {#<select name="typeProduit_id">#}
+                    {#{% if  donnees.typeProduit_id is not defined or donnees.typeProduit_id is empty   %}#}
+                        {#<option value="">Veuillez sélectionner un produit</option>#}
+                    {#{% endif %}#}
+                    {#{% for typeProduit in typeProduits %}#}
+                        {#<option value="{{ typeProduit.id }}"#}
+                                {#{% if donnees.typeProduit_id is defined and typeProduit.id == donnees.typeProduit_id %}selected{% endif %}>#}
+                            {#{{ typeProduit.libelle }}#}
+                        {#</option>#}
+                    {#{% endfor %}#}
+                    {#</select>#}
+            {#</label>#}
+            {#<label>Prix#}
+                {#<input name="prix"  type="text"  size="18" 	value="{{donnees.prix|default('')}}"/>#}
+            {#</label>#}
+            {#<label>Photo#}
+                {#<input name="photo"  type="text"  size="18" value="{{donnees.photo|default('')}}"/>#}
+            {#</label>#}
+            {#<input type="submit" name="creerProduit" value="créer" />#}
+        {#</fieldset>#}
+    {#</div>#}
+{#</form>#}
 {% endblock %}

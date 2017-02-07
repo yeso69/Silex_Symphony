@@ -28,6 +28,22 @@ class ProduitModel {
         return $queryBuilder->execute()->fetchAll();
 
     }
+    public function getProduitsStockMin() {
+//        $sql = "SELECT p.id, t.libelle, p.nom, p.prix, p.photo
+//            FROM produits as p,typeProduits as t
+//            WHERE p.typeProduit_id=t.id ORDER BY p.nom;";
+//        $req = $this->db->query($sql);
+//        return $req->fetchAll();
+        $queryBuilder = new QueryBuilder($this->db);
+        $queryBuilder
+            ->select('p.id', 't.libelle', 'p.nom', 'p.prix', 'p.photo','p.dispo','p.stock')
+            ->from('produits', 'p')
+            ->innerJoin('p', 'typeProduits', 't', 'p.typeProduit_id=t.id')
+            ->where('p.stock<5')
+            ->addOrderBy('p.nom', 'ASC');
+        return $queryBuilder->execute()->fetchAll();
+
+    }
 
     public function insertProduit($donnees) {
         $queryBuilder = new QueryBuilder($this->db);
@@ -36,12 +52,16 @@ class ProduitModel {
                 'nom' => '?',
                 'typeProduit_id' => '?',
                 'prix' => '?',
-                'photo' => '?'
+                'photo' => '?',
+                'dispo' => '?',
+                'stock' => '?'
             ])
             ->setParameter(0, $donnees['nom'])
             ->setParameter(1, $donnees['typeProduit_id'])
             ->setParameter(2, $donnees['prix'])
             ->setParameter(3, $donnees['photo'])
+            ->setParameter(4, $donnees['dispo'])
+            ->setParameter(5, $donnees['stock'])
         ;
         return $queryBuilder->execute();
     }
@@ -80,6 +100,7 @@ class ProduitModel {
             ->setParameter(1, $produit['id']);
         return $queryBuilder->execute();
     }
+
 
 
 
