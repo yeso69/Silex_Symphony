@@ -22,4 +22,15 @@ class TypeProduitModel {
             ->addOrderBy('p.libelle', 'ASC');
         return $queryBuilder->execute()->fetchAll();
     }
+
+    public function getTypeProduit($id) {
+        $queryBuilder = new QueryBuilder($this->db);
+        $queryBuilder
+            ->select('*')
+            ->from('typeProduits')
+            ->where('id = :id')
+            ->setParameter('id', $id);
+        return $queryBuilder->execute()->fetch();
+
+    }
 }

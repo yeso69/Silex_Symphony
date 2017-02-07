@@ -3,6 +3,7 @@
     <div class="noty-holder">
         <div class="alert alert-{{ alert.type }} alert-dismissable page-alert">
             <button type="button" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+            <h4>
             {% if   alert.type  == "info" %}
                 <i class="fa fa-info-circle" aria-hidden="true"></i>
             {% elseif   alert.type  == "success" %}
@@ -14,6 +15,7 @@
             {% endif %}
 
             {{ alert.message }}
+            </h4>
         </div>
     </div>
     {# info/success/warning/danger #}

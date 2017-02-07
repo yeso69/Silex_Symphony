@@ -71,30 +71,25 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users (
   id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   username VARCHAR(100) NOT NULL DEFAULT '',
-  password VARCHAR(255) NOT NULL DEFAULT '',
-  motdepasse VARCHAR(255) NOT NULL DEFAULT '',
-  roles VARCHAR(255) NOT NULL DEFAULT '',
-  email  VARCHAR(255) NOT NULL DEFAULT '',
-  nom VARCHAR(100) NOT NULL DEFAULT '',
-  prenom VARCHAR(100) NOT NULL DEFAULT '',
-  ville VARCHAR(100) NOT NULL DEFAULT '',
-  adresse VARCHAR(100) NOT NULL DEFAULT '',
-  cp NUMERIC () NOT NULL DEFAULT '',
-
+  password VARCHAR(255) NOT NULL,
+  roles VARCHAR(255) NOT NULL DEFAULT 'ROLE_INVITE',
+  email  VARCHAR(255) NOT NULL,
+  lname VARCHAR(100) NOT NULL ,
+  fname VARCHAR(100) NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  address VARCHAR(100) NOT NULL,
+  zip VARCHAR(5) NOT NULL,
   isEnabled TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-# mot de passe crypté avec security.encoder.bcrypt
-
-INSERT INTO users (id,username,password,motdepasse,email,roles) VALUES
-(1, 'admin', '$2y$13$mJK5hyDNAY9rcDuEBofjJ.h3d7xBwlApfMoknBDO0AvXLr1AaJM02', 'admin', 'admin@gmail.com','ROLE_ADMIN'),
-(2, 'invite', '$2y$13$j5rdj5QL3fd.IZlA5JNbc.kTRaa1YbJK/G7h2mB51ySzaDdgEbo8W', 'invite', 'admin@gmail.com','ROLE_INVITE'),
-(3, 'vendeur', '$2y$13$/gwC0Iv6ssewrr9JeUDDuOcRTWD.uIEjJpH1HUWPAxe.5EwY98OEO','vendeur', 'vendeur@gmail.com','ROLE_VENDEUR'),
-(4, 'client', '$2y$13$bhuMlUWdfc5mAhVumuKUG.etahlJ399DEwuQPhbdXjiCdKIeX2nii', 'client', 'client@gmail.com','ROLE_CLIENT'),
-(5, 'client2', '$2y$13$SYEM3Tk/5G.C85pIAm0cSOd8BFrFTEnLHBSWsW96Q3k9gCdFXRmvm','client2', 'client2@gmail.com','ROLE_CLIENT');
+INSERT INTO users (id,username,password,roles,email,lname,fname,city,address,zip) VALUES
+(1, 'admin', 'admin','ROLE_ADMIN','admin@gmail.com', 'admin', 'admin', 'Lyon', '14 Avenue Saint-Exupéry', '69007'),
+(2, 'invite', 'invite','ROLE_INVITE','invite@gmail.com', 'invite', 'invite', 'Lyon', '14 Rue 42', '69000'),
+(3, 'vendeur', 'vendeur','ROLE_VENDEUR','vendeur@gmail.com', 'vendeur', 'vendeur', 'Belfort', '14 Avenue Jean Jaurès', '90000'),
+(4, 'client','client','ROLE_CLIENT','client@gmail.com', 'client', 'client', 'Paris', '1 Avenue des Champs-Elysées', '75000');
 
 
 

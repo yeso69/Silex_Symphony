@@ -95,18 +95,14 @@ class PanierController implements ControllerProviderInterface
             else
                 $panier[$id] = 1;
         }
+        $this->produitModel = new ProduitModel($app);
+        $produit = $this->produitModel->getProduit($id);
+        $app['session']->getFlashBag()->add('notifications',
+            array('type' => 'info', 'message' => $produit['nom'].' a été ajouté à votre panier !'));
 
         $app['session']->set('panier',$panier);
         //var_dump($panier);die();
-        return $app->redirect($app["url_generator"]->generate("panier.show"));
-
-//        var_dump("hello");
-//        $this->panierModel = new PanierModel($app);
-//        $paniers = $this->produitModel->getProduit($id);
-//        var_dump($paniers);
-//        $this->panierModel = new PanierModel($app);
-//        $paniers = $this->panierModel->insertPanier();
-//        return $app["twig"]->render('frontOff/Produit/show.html.twig',['path'=>BASE_URL]);
+        return $app->redirect($app["url_generator"]->generate("produit.show"));
     }
 
     public function connect(Application $app) {  //http://silex.sensiolabs.org/doc/providers.html#controller-providers

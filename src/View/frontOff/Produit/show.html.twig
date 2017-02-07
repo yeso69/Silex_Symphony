@@ -10,7 +10,7 @@
 				<p class="lead">Boutique FFH</p>
 				<div class="list-group">
 					{% for typep in type if type is not empty %}
-						<a href="#" class="list-group-item"> {{ typep.libelle }} </a>
+						<a href="{{ path('produit.type', {id: typep.id}) }}" class="list-group-item"> {{ typep.libelle }} </a>
 					{% endfor %}
 				</div>
 			</div>
@@ -73,7 +73,7 @@
 										<p class="btn-add">
 											<i class="fa fa-shopping-cart"></i><a href="{{ path('panier.add', {id: produit.id}) }}" class="hidden-sm">Ajout panier</a></p>
 										<p class="btn-details">
-											<i class="fa fa-list"></i><a href="http://www.jquery2dotnet.com" class="hidden-sm">Details</a></p>
+											<i class="fa fa-list"></i><a href="{{ path('produit.detail', {id: produit.id}) }}" class="hidden-sm">Fiche</a></p>
 									</div>
 									<div class="clearfix">
 									</div>

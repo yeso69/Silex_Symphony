@@ -1,0 +1,73 @@
+{% extends "layout.html.twig" %}
+{% block contenu %}
+    <link href="{{ asset('assets/css/produits.css') }}" rel="stylesheet">
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-md-3">
+                <p class="lead">{{ categorie }}</p>
+                <div class="list-group">
+                    {% for typep in type if type is not empty %}
+                        <a href="{{ path('produit.type', {id: typep.id}) }}" class="list-group-item"> {{ typep.libelle }} </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-9">
+
+                <div class="row">
+                    {% for produit in produits if produits is not empty %}
+                        <div class="col-sm-4 col-lg-4 col-md-4">
+                            <div class="col-item">
+                                <div class="photo">
+                                    <img src="{{ asset('assets/img/')}}{{ produit.photo }}" class="img-responsive" >
+                                </div>
+                                <div class="info">
+                                    <div class="caption">
+                                        <h4 class="pull-right">{{produit.prix}}</h4>
+                                        <h4><a href="#">{{produit.nom}}</a>
+                                        </h4>
+                                        <div class="rating" style="align:right">
+                                            <p class="pull-right">Stock : {{produit.stock}}</p>
+
+                                            <i class="price-text-color fa fa-star"></i><i class="price-text-color fa fa-star">
+                                            </i><i class="price-text-color fa fa-star"></i><i class="price-text-color fa fa-star">
+                                            </i><i class="fa fa-star"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="separator clear-left">
+                                        <p class="btn-add">
+                                            <i class="fa fa-shopping-cart"></i><a href="{{ path('panier.add', {id: produit.id}) }}" class="hidden-sm">Ajout panier</a></p>
+                                        <p class="btn-details">
+                                            <i class="fa fa-list"></i><a href="{{ path('produit.detail', {id: produit.id}) }}" class="hidden-sm">Fiche</a></p>
+                                    </div>
+                                    <div class="clearfix">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="container">
+        <hr>
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; Your Website 2014</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+{% endblock %}

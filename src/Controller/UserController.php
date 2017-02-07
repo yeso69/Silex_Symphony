@@ -12,6 +12,8 @@ use Silex\Provider\TranslationServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +29,7 @@ class UserController implements ControllerProviderInterface {
 		return $this->connexionUser($app);
 	}
 
-	public function connexionUser(Application $app, Request $req)
+	public function connexionUser(Application $app, Request $req)//Connexion utilisateur
 	{
 //		return $app["twig"]->render('login.html.twig');
 
@@ -41,8 +43,6 @@ class UserController implements ControllerProviderInterface {
 
         //création du formulaire de conexion
         $form = $app['form.factory']->createBuilder(FormType::class)
-            ->add('login')
-            ->add('password')
             ->add('login', TextType::class, array(
                 'constraints' => array(new NotBlank(), new Length(array('min' => 5))),
                 'attr' => array('class' => 'form-control input-lg','placeholder' => 'Identifiant'),
@@ -70,6 +70,8 @@ class UserController implements ControllerProviderInterface {
             {
                 $app['session']->set('roles', $data['roles']);  //dans twig {{ app.session.get('roles') }}
                 $app['session']->set('username', $data['username']);
+                $app['session']->set('fname', $data['fname']);
+                $app['session']->set('lname', $data['lname']);
                 $app['session']->set('logged', 1);
                 $app['session']->set('user_id', $data['id']);
                 $app['session']->getFlashBag()->add('notifications',
@@ -87,7 +89,7 @@ class UserController implements ControllerProviderInterface {
         return $app['twig']->render('login.html.twig', array( 'form' => $form->createView() ));
 	}
 
-    public function register(Application $app, Request $req){
+    public function register(Application $app, Request $req){//Incription
         $app->register(new FormServiceProvider());
         $app->register(new CsrfServiceProvider());
         $app->register(new TranslationServiceProvider(), array(
@@ -105,17 +107,50 @@ class UserController implements ControllerProviderInterface {
             ->add('password', PasswordType::class, array(
                 'constraints' => array(new NotBlank(), new Length(array('min' => 5))),
                 'attr' => array('class' => 'form-control input-lg','placeholder' => 'Mot de passe'),
-                'label' => false
+                'label' => false,
+                'required'    => true
             ))
             ->add('motdepasse', PasswordType::class, array(
                 'constraints' => array(new NotBlank(), new Length(array('min' => 5))),
                 'attr' => array('class' => 'form-control input-lg','placeholder' => 'Confirmation'),
-                'label' => false
+                'label' => false,
+                'required'    => true
             ))
             ->add('email', EmailType::class, array(
                 'constraints' => new Email(),
                 'attr' => array('class' => 'form-control input-lg','placeholder' => 'mon@mail.com'),
-                'label' => false
+                'label' => false,
+                'required'    => true
+            ))
+            ->add('fname', TextType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 2))),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Prénom'),
+                'label' => false,
+                'required'    => true
+            ))
+            ->add('lname', TextType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 2))),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Nom'),
+                'label' => false,
+                'required'    => true
+            ))
+            ->add('address', TextType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 5))),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Adresse'),
+                'label' => false,
+                'required'    => true
+            ))
+            ->add('city', TextType::class, array(
+                'constraints' => array(new NotBlank()),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Ville'),
+                'label' => false,
+                'required'    => true
+            ))
+            ->add('zip', NumberType::class, array(
+                'constraints' => array(new NotBlank(),new Length(array('max' => 5))),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Code postal'),
+                'label' => false,
+                'required'    => true
             ))
 
             ->getForm();
@@ -131,7 +166,7 @@ class UserController implements ControllerProviderInterface {
                 return $app['twig']->render('register.html.twig', array('form' => $form->createView()));
             }
 
-            $donnees['password'] = $app['security.encoder.digest']->encodePassword($donnees['password'], '');
+            //$donnees['password'] = $app['security.encoder.digest']->encodePassword($donnees['password'], '');
             // do something with the data
             $this->userModel = new UserModel($app);
             $data=$this->userModel->insertUser($donnees);
@@ -147,30 +182,124 @@ class UserController implements ControllerProviderInterface {
 
     }
 
-//	public function validFormConnexionUser(Application $app, Request $req)
-//	{
-//
-//		$app['session']->clear();
-//		$donnees['login']=$req->get('login');
-//		$donnees['password']=$req->get('password');
-//		$this->userModel = new UserModel($app);
-//		$data=$this->userModel->verif_login_mdp_Utilisateur($donnees['login'],$donnees['password']);
-//
-//		if($data != NULL)
-//		{
-//			$app['session']->set('roles', $data['roles']);  //dans twig {{ app.session.get('roles') }}
-//			$app['session']->set('username', $data['username']);
-//			$app['session']->set('logged', 1);
-//			$app['session']->set('user_id', $data['id']);
-//			return $app->redirect($app["url_generator"]->generate("accueil"));
-//		}
-//		else
-//		{
-//			$app['session']->set('erreur','Login ou mot de passe incorrect');
-//			//return $app["twig"]->render('login.html.twig');
-//		}
-//	}
-	public function deconnexionSession(Application $app)
+    public function modifier(Application $app, Request $req){//Modifier mon compte
+        $this->userModel = new UserModel($app);
+        $user_id = $app['session']->get('user_id');
+        $user=$this->userModel->getUser($user_id);
+
+        $app->register(new FormServiceProvider());
+        $app->register(new CsrfServiceProvider());
+        $app->register(new TranslationServiceProvider(), array(
+            'translator.domains' => array(),
+            'locale'            => 'fr',
+        ));
+
+        $form = $app['form.factory']->createBuilder(FormType::class)
+            ->add('username', TextType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 5))),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Identifiant'),
+                'label_attr' => array('class' => ''),
+                'required'    => true,
+                'label' => 'Login',
+                'data' => $user['username']
+//                'value' => 'chèvre'
+            ))
+            ->add('password', PasswordType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 5))),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Mot de passe', 'value' => $user['password']),
+                'label' => 'Mot de passe',
+                'required'    => true
+            ))
+            ->add('motdepasse', PasswordType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 5))),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Confirmation'),
+                'label' => 'Confirmation',
+                'required'    => true
+            ))
+            ->add('email', EmailType::class, array(
+                'constraints' => new Email(),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'mon@email.com', 'value' => $user['email']),
+                'label' => 'Email',
+                'required'    => true,
+                'data' => $user['email'],
+            ))
+            ->add('fname', TextType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 2))),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Prénom', 'value' => $user['fname']),
+                'label' => 'Prénom',
+                'required'    => true,
+                'data' => $user['fname'],
+
+            ))
+            ->add('lname', TextType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 2))),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Nom', 'value' => $user['lname']),
+                'label' => 'Nom',
+                'required'    => true,
+                'data' => $user['lname'],
+            ))
+            ->add('address', TextType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 5))),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Adresse', 'value' => $user['address']),
+                'label' => 'Email',
+                'required'    => true,
+                'data' => $user['address'],
+
+            ))
+            ->add('city', TextType::class, array(
+                'constraints' => array(new NotBlank()),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Ville', 'value' => $user['city']),
+                'label' => 'Ville',
+                'required'    => true,
+                'data' => $user['city'],
+            ))
+            ->add('zip', NumberType::class, array(
+                'constraints' => array(new NotBlank(),new Length(array('max' => 5))),
+                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Code postal', 'value' => $user['zip']),
+                'label' => 'Code postal',
+                'required'    => true,
+                'data' => $user['zip'],
+            ))
+            ->add('id', HiddenType::class, array(
+//                'constraints' => array(new NotBlank(),new Length(array('max' => 5))),
+//                'attr' => array('class' => 'form-control input-lg','placeholder' => 'Code postal', 'value' => $user['zip']),
+//                'label' => 'Code postal',
+//                'required'    => true,
+                'data' => $user['id'],
+            ))
+
+            ->getForm();
+
+        $form->handleRequest($req);
+
+        if ($form->isSubmitted() && $form->isValid()) {//Si le formulaire est ok on vérifie si les logins existent et sont ok
+            $donnees = $form->getData();
+            if(!($donnees['password'] == $donnees['motdepasse'])){
+                $app['session']->getFlashBag()->add('notifications',
+                    array('type' => 'warning', 'message' =>'Les mots de passe ne correspondent pas.'));
+                // display the form
+                return $app['twig']->render('user.edit.html.twig', array('form' => $form->createView()));
+            }
+
+            //$donnees['password'] = $app['security.encoder.digest']->encodePassword($donnees['password'], '');
+            // do something with the data
+            $this->userModel = new UserModel($app);
+            $data=$this->userModel->updateUser($donnees);
+
+            // redirect somewhere
+            $app['session']->getFlashBag()->add('notifications',
+                array('type' => 'success', 'message' =>'Modifications effectuées !'));
+            return $app->redirect($app["url_generator"]->generate("user.edit"));
+        }
+
+        // display the form
+        return $app['twig']->render('frontOff/User/edit.html.twig', array('form' => $form->createView()));
+
+
+    }
+
+
+    public function deconnexionSession(Application $app)
 	{
 		$app['session']->clear();
         $app['session']->getFlashBag()->add('notifications',
@@ -183,6 +312,8 @@ class UserController implements ControllerProviderInterface {
 		$controllers->match('/', 'App\Controller\UserController::index')->bind('user.index');
 		$controllers->get('/login', 'App\Controller\UserController::connexionUser')->bind('user.login');
 		$controllers->post('/login', 'App\Controller\UserController::connexionUser')->bind('user.validFormlogin');
+        $controllers->get('/compte', 'App\Controller\UserController::modifier')->bind('user.edit');
+        $controllers->post('/compte', 'App\Controller\UserController::modifier')->bind('user.validModif');
 		$controllers->get('/logout', 'App\Controller\UserController::deconnexionSession')->bind('user.logout');
         $controllers->get('/register', 'App\Controller\UserController::register')->bind('user.register');
         $controllers->post('/register', 'App\Controller\UserController::register')->bind('user.validInscription');

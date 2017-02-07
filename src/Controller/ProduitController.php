@@ -75,12 +75,14 @@ class ProduitController implements ControllerProviderInterface
             return $app->abort(404, 'error Pb data form Add');
     }
 
-    public function delete(Application $app, $id) {
+    public function showByType(Application $app, $id) {
         $this->typeProduitModel = new TypeProduitModel($app);
-        $typeProduits = $this->typeProduitModel->getAllTypeProduits();
+        $typeProduit = $this->typeProduitModel->getAllTypeProduits();
+        $categorie = $this->typeProduitModel->getTypeProduit($id)['libelle'];//recup du nom de la catégorie actuelle
+
         $this->produitModel = new ProduitModel($app);
-        $donnees = $this->produitModel->getProduit($id);
-        return $app["twig"]->render('backOff/Produit/delete.html.twig',['typeProduits'=>$typeProduits,'donnees'=>$donnees]);
+        $produits = $this->produitModel->getProduitsByType($id);//recup des produits de cette catégorie
+        return $app["twig"]->render('frontOff/Produit/type.html.twig',['produits'=>$produits, 'type'=>$typeProduit, 'categorie' => $categorie]);
     }
 
     public function validFormDelete(Application $app, Request $req) {
@@ -145,14 +147,6 @@ class ProduitController implements ControllerProviderInterface
 
           //   die();
             if (count($errors) > 0) {
-                // foreach ($errors as $error) {
-                //     echo $error->getPropertyPath().' '.$error->getMessage()."\n";
-                // }
-                // //die();
-                //var_dump($erreurs);
-
-            // if(! empty($erreurs))
-            // {
                 $this->typeProduitModel = new TypeProduitModel($app);
                 $typeProduits = $this->typeProduitModel->getAllTypeProduits();
                 return $app["twig"]->render('backOff/Produit/edit.html.twig',['donnees'=>$donnees,'errors'=>$errors,'erreurs'=>$erreurs,'typeProduits'=>$typeProduits]);
@@ -170,11 +164,32 @@ class ProduitController implements ControllerProviderInterface
 
     }
 
+    public function detail(Application $app, Request $req)
+    {
+        $this->produitModel = new ProduitModel($app);
+        $id=$app->escape($req->get('id'));
+        $produit = $this->produitModel->getProduit($id);
+        $commentaires = array('id' => '1', 'comment' => 'Bon produit !', 'user' => 'Jean');
+        return $app["twig"]->render('frontOff/Produit/detail.html.twig',['produit'=>$produit,'commentaires'=>$commentaires]);
+    }
+
+    public function delete(Application $app, $id) {
+        $this->typeProduitModel = new TypeProduitModel($app);
+        $typeProduits = $this->typeProduitModel->getAllTypeProduits();
+        $this->produitModel = new ProduitModel($app);
+        $donnees = $this->produitModel->getProduit($id);
+        return $app["twig"]->render('backOff/Produit/delete.html.twig',['typeProduits'=>$typeProduits,'donnees'=>$donnees]);
+    }
+
+
+
     public function connect(Application $app) {  //http://silex.sensiolabs.org/doc/providers.html#controller-providers
         $controllers = $app['controllers_factory'];
 
         $controllers->get('/', 'App\Controller\produitController::index')->bind('produit.index');
-        $controllers->get('/show', 'App\Controller\produitController::show')->bind('produit.show');
+        $controllers->get('/show', 'App\Controller\produitController::show')->bind('produit.show');//tous les roduits
+        $controllers->get('/detail/{id}', 'App\Controller\produitController::detail')->bind('produit.detail');//tous les roduits
+        $controllers->get('/categorie/{id}', 'App\Controller\produitController::showByType')->bind('produit.type');//tous les produits d'un type donné
 
         $controllers->get('/add', 'App\Controller\produitController::add')->bind('produit.add');
         $controllers->post('/add', 'App\Controller\produitController::validFormAdd')->bind('produit.validFormAdd');
