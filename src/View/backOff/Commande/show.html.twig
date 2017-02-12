@@ -11,10 +11,11 @@
 			<thead>
 			<tr>
 				<th style="width:10%">N° de commande</th>
-				<th style="width:20%">Date d'achat</th>
-				<th style="width:15%">Montant total</th>
-				<th style="width:15%">Etat</th>
-				<th style="width:15%">Operations</th>
+				<th style="width:15%">Date d'achat</th>
+				<th style="width:10%">Montant total</th>
+				<th style="width:10%">Etat</th>
+				<th style="width:10%">Client</th>
+				<th style="width:10%">Operations</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -34,6 +35,7 @@
 				<td data-th="Prix">{{commande.date_achat}}</td>
 				<td data-th="Date">{{commande.prix}} €</td>
 				<td data-th="Date">{{commande.libelle}}</td>
+				<td data-th="Date">{{commande.fname}} {{commande.lname}}</td>
 				<td data-th="Operation">
 					<a href="{{ path('admin.commande.showetat', {id: commande.id})}}" class="btn btn-info btn-sm"><i class="fa fa-pencil-square-o"></i></a>
 					<a href="#" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></a>

@@ -28,10 +28,12 @@ class CommandeModel {
     public function getAllCommande() {
         $queryBuilder = new QueryBuilder($this->db);
         $queryBuilder
-            ->select('c.id', 'c.prix', 'c.date_achat', 'c.etat_id', 'e.libelle')
+            ->select('c.id', 'c.prix', 'c.date_achat', 'c.etat_id', 'e.libelle', 'u.fname', 'u.lname')
             ->from('commandes', 'c')
             ->addOrderBy('c.date_achat', 'DESC')
-            ->innerJoin('c', 'etats', 'e', 'c.etat_id=e.id');
+            ->innerJoin('c', 'etats', 'e', 'c.etat_id=e.id')
+            ->innerJoin('c', 'users', 'u', 'c.user_id=u.id');
+
 
         return $queryBuilder->execute()->fetchAll();
 
