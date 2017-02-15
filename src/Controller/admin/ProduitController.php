@@ -169,69 +169,156 @@ class ProduitController implements ControllerProviderInterface
     }
 
     public function validFormEdit(Application $app,Request $req) {
-        // var_dump($app['request']->attributes);
-        if (isset($_POST['nom']) && isset($_POST['typeProduit_id']) and isset($_POST['prix']) and isset($_POST['photo']) and isset($_POST['id'])) {
-            $donnees = [
-                'nom' => htmlspecialchars($_POST['nom']),                    // echapper les entrées
-                'typeProduit_id' => htmlspecialchars($req->get('typeProduit_id')),  //$app['request']-> ne focntionne plus
-                'prix' => htmlspecialchars($req->get('prix')),
-                'photo' => $app->escape($req->get('photo')),  //$req->query->get('photo')-> ne focntionne plus
-                'id' => $app->escape($req->get('id'))//$req->query->get('photo')
-            ];
-            if ((! preg_match("/^[A-Za-z ]{2,}/",$donnees['nom']))) $erreurs['nom']='nom composé de 2 lettres minimum';
-            if(! is_numeric($donnees['typeProduit_id']))$erreurs['typeProduit_id']='veuillez saisir une valeur';
-            if(! is_numeric($donnees['prix']))$erreurs['prix']='saisir une valeur numérique';
-            if (! preg_match("/[A-Za-z0-9]{2,}.(jpeg|jpg|png)/",$donnees['photo'])) $erreurs['photo']='nom de fichier incorrect (extension jpeg , jpg ou png)';
-            if(! is_numeric($donnees['id']))$erreurs['id']='saisir une valeur numérique';
-            $contraintes = new Assert\Collection(
-                [
-                    'id' => [new Assert\NotBlank(),new Assert\Type('digit')],
-                    'typeProduit_id' => [new Assert\NotBlank(),new Assert\Type('digit')],
-                    'nom' => [
-                        new Assert\NotBlank(['message'=>'saisir une valeur']),
-                        new Assert\Length(['min'=>2, 'minMessage'=>"Le nom doit faire au moins {{ limit }} caractères."])
-                    ],
-                    //http://symfony.com/doc/master/reference/constraints/Regex.html
-                    'photo' => [
-                        new Assert\Length(array('min' => 5)),
-                        new Assert\Regex([ 'pattern' => '/[A-Za-z0-9]{2,}.(jpeg|jpg|png)/',
-                        'match'   => true,
-                        'message' => 'nom de fichier incorrect (extension jpeg , jpg ou png)' ]),
-                    ],
-                    'prix' => new Assert\Type(array(
-                        'type'    => 'numeric',
-                        'message' => 'La valeur {{ value }} n\'est pas valide, le type est {{ type }}.',
-                    ))
-                ]);
-            $errors = $app['validator']->validate($donnees,$contraintes);  // ce n'est pas validateValue
-
-        //    $violationList = $this->get('validator')->validateValue($req->request->all(), $contraintes);
-//var_dump($violationList);
-
-          //   die();
-            if (count($errors) > 0) {
-                // foreach ($errors as $error) {
-                //     echo $error->getPropertyPath().' '.$error->getMessage()."\n";
-                // }
-                // //die();
-                //var_dump($erreurs);
-
-            // if(! empty($erreurs))
-            // {
-                $this->typeProduitModel = new TypeProduitModel($app);
-                $typeProduits = $this->typeProduitModel->getAllTypeProduits();
-                return $app["twig"]->render('backOff/Produit/edit.html.twig',['donnees'=>$donnees,'errors'=>$errors,'erreurs'=>$erreurs,'typeProduits'=>$typeProduits]);
-            }
-            else
-            {
-                $this->ProduitModel = new ProduitModel($app);
-                $this->ProduitModel->updateProduit($donnees);
-                return $app->redirect($app["url_generator"]->generate("admin.produit.index"));
-            }
-
+        $app->register(new FormServiceProvider());
+        $app->register(new CsrfServiceProvider());
+        $app->register(new ValidatorServiceProvider());
+        $app->register(new TranslationServiceProvider(), array(
+            'translator.domains' => array(),
+            'locale' => 'fr',
+        ));
+        $id = $app->escape($req->get('id'));
+        $this->ProduitModel = new ProduitModel($app);
+        $prod = $this->ProduitModel->getProduit($id);
+        var_dump($prod);
+        $this->typeProduitModel = new TypeProduitModel($app);
+        $typeProduits = $this->typeProduitModel->getAllTypeProduits();
+        $tab = array();
+        for ($i=0;$i<sizeof($typeProduits);$i++){
+            $tab[$i]=$typeProduits[$i]['libelle'];
         }
-        else
-            return $app->abort(404, 'error Pb id form edit');
+        $tab = array_flip($tab);
+        //création du formulaire de conexion
+        $form = $app['form.factory']->createBuilder(FormType::class)
+            ->add('nom')
+            ->add('typeProduit_id')
+            ->add('prix')
+            ->add('photo')
+            ->add('dispo')
+            ->add('stock')
+            ->add('nom', TextType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 3))),
+                'attr' => array('class' => 'form-control', 'placeholder' => 'Nom', 'value' => $prod['nom']),
+                'required' => true,
+                'label' => 'Nom',
+                //'data' => $prod['nom']
+            ))
+            ->add('typeProduit_id', ChoiceType::class, array(
+                'constraints' => array(new NotBlank()),
+                'choices'  => $tab,
+                'attr' => array('class' => 'form-control', 'placeholder' => 'Type', 'value' => $prod['typeProduit_id']),
+                'required' => true,
+                'label' => 'Type de produit',
+                //'data' => $prod['typeProduit_id']
+            ))
+            ->add('prix', NumberType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 1))),
+                'attr' => array('class' => 'form-control', 'placeholder' => 'Prix', 'value' => $prod['prix']),
+                'required' => true,
+                'label' => 'Prix',
+                //'data' => $prod['prix']
+            ))
+            ->add('photo', FileType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 2))),
+                'attr' => array('class' => 'form-control', 'placeholder' => '', 'value' => $prod['photo']),
+                'label' => "Photo",
+                //'data' => $prod['photo']
+            ))
+            ->add('dispo', NumberType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 1))),
+                'attr' => array('class' => 'form-control', 'placeholder' => 'dispo', 'value' => $prod['dispo']),
+                'required' => true,
+                'label' => 'Dispo',
+                //'data' => $prod['dispo']
+            ))
+            ->add('stock', NumberType::class, array(
+                'constraints' => array(new NotBlank(), new Length(array('min' => 1))),
+                'attr' => array('class' => 'form-control', 'placeholder' => 'Stock', 'value' => $prod['stock']),
+                'required' => true,
+                'label' => 'Stock',
+                //'data' => $prod['stock']
+            ))
+            ->getForm();
+
+        //recupération des donnes recues en post
+        $form->handleRequest($req);
+        $donnees = $form->getData();
+//        $webPath = $this->get('kernel')->getRootDir().'/../web';
+//        var_dump($webPath); die;
+        if ($form->isSubmitted() && $form->isValid()) {//Si le formulaire est ok on vérifie si les logins existent et sont ok
+//            $dir='C:\UwAmp\www\Silex_Symphonyy\web\assets\img';
+//            var_dump($form);
+//            $donnees['photo']->move($dir, $donnees['photo']);
+            $this->ProduitModel = new ProduitModel($app);
+            $this->ProduitModel->updateProduit($donnees);
+            return $app->redirect($app["url_generator"]->generate("admin.produit.index"));
+        }
+        $this->typeProduitModel = new TypeProduitModel($app);
+        $typeProduits = $this->typeProduitModel->getAllTypeProduits();
+        return $app["twig"]->render('backOff/Produit/edit.html.twig', array( 'form' => $form->createView() , 'typeProduits' => $typeProduits));
+
+        // var_dump($app['request']->attributes);
+//        if (isset($_POST['nom']) && isset($_POST['typeProduit_id']) and isset($_POST['prix']) and isset($_POST['photo']) and isset($_POST['id'])) {
+//            $donnees = [
+//                'nom' => htmlspecialchars($_POST['nom']),                    // echapper les entrées
+//                'typeProduit_id' => htmlspecialchars($req->get('typeProduit_id')),  //$app['request']-> ne focntionne plus
+//                'prix' => htmlspecialchars($req->get('prix')),
+//                'photo' => $app->escape($req->get('photo')),  //$req->query->get('photo')-> ne focntionne plus
+//                'id' => $app->escape($req->get('id'))//$req->query->get('photo')
+//            ];
+//            if ((! preg_match("/^[A-Za-z ]{2,}/",$donnees['nom']))) $erreurs['nom']='nom composé de 2 lettres minimum';
+//            if(! is_numeric($donnees['typeProduit_id']))$erreurs['typeProduit_id']='veuillez saisir une valeur';
+//            if(! is_numeric($donnees['prix']))$erreurs['prix']='saisir une valeur numérique';
+//            if (! preg_match("/[A-Za-z0-9]{2,}.(jpeg|jpg|png)/",$donnees['photo'])) $erreurs['photo']='nom de fichier incorrect (extension jpeg , jpg ou png)';
+//            if(! is_numeric($donnees['id']))$erreurs['id']='saisir une valeur numérique';
+//            $contraintes = new Assert\Collection(
+//                [
+//                    'id' => [new Assert\NotBlank(),new Assert\Type('digit')],
+//                    'typeProduit_id' => [new Assert\NotBlank(),new Assert\Type('digit')],
+//                    'nom' => [
+//                        new Assert\NotBlank(['message'=>'saisir une valeur']),
+//                        new Assert\Length(['min'=>2, 'minMessage'=>"Le nom doit faire au moins {{ limit }} caractères."])
+//                    ],
+//                    //http://symfony.com/doc/master/reference/constraints/Regex.html
+//                    'photo' => [
+//                        new Assert\Length(array('min' => 5)),
+//                        new Assert\Regex([ 'pattern' => '/[A-Za-z0-9]{2,}.(jpeg|jpg|png)/',
+//                        'match'   => true,
+//                        'message' => 'nom de fichier incorrect (extension jpeg , jpg ou png)' ]),
+//                    ],
+//                    'prix' => new Assert\Type(array(
+//                        'type'    => 'numeric',
+//                        'message' => 'La valeur {{ value }} n\'est pas valide, le type est {{ type }}.',
+//                    ))
+//                ]);
+//            $errors = $app['validator']->validate($donnees,$contraintes);  // ce n'est pas validateValue
+//
+//        //    $violationList = $this->get('validator')->validateValue($req->request->all(), $contraintes);
+////var_dump($violationList);
+//
+//          //   die();
+//            if (count($errors) > 0) {
+//                // foreach ($errors as $error) {
+//                //     echo $error->getPropertyPath().' '.$error->getMessage()."\n";
+//                // }
+//                // //die();
+//                //var_dump($erreurs);
+//
+//            // if(! empty($erreurs))
+//            // {
+//                $this->typeProduitModel = new TypeProduitModel($app);
+//                $typeProduits = $this->typeProduitModel->getAllTypeProduits();
+//                return $app["twig"]->render('backOff/Produit/edit.html.twig',['donnees'=>$donnees,'errors'=>$errors,'erreurs'=>$erreurs,'typeProduits'=>$typeProduits]);
+//            }
+//            else
+//            {
+//                $this->ProduitModel = new ProduitModel($app);
+//                $this->ProduitModel->updateProduit($donnees);
+//                return $app->redirect($app["url_generator"]->generate("admin.produit.index"));
+//            }
+//
+//        }
+//        else
+//            return $app->abort(404, 'error Pb id form edit');
 
     }
 
@@ -246,7 +333,7 @@ class ProduitController implements ControllerProviderInterface
         $controllers->get('/delete/{id}', 'App\Controller\admin\produitController::delete')->bind('admin.produit.delete')->assert('id', '\d+');
         $controllers->delete('/delete', 'App\Controller\admin\produitController::validFormDelete')->bind('admin.produit.validFormDelete');
 
-        $controllers->get('/edit/{id}', 'App\Controller\admin\produitController::edit')->bind('admin.produit.edit');
+        $controllers->get('/edit/{id}', 'App\Controller\admin\produitController::validFormEdit')->bind('admin.produit.edit');
         $controllers->post('/edit/{id}', 'App\Controller\admin\produitController::validFormEdit')->bind('admin.produit.validFormEdit');
 
         return $controllers;

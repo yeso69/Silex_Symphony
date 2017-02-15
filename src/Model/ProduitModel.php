@@ -69,7 +69,7 @@ class ProduitModel {
     function getProduit($id) {
         $queryBuilder = new QueryBuilder($this->db);
         $queryBuilder
-            ->select('p.id', 't.libelle', 'p.typeProduit_id', 'nom', 'prix', 'photo', 'stock')
+            ->select('p.id', 't.libelle', 'p.typeProduit_id', 'nom', 'prix', 'photo', 'dispo', 'stock')
             ->from('produits', 'p')
             ->where('p.id= :id')
             ->innerJoin('p', 'typeProduits', 't', 'p.typeProduit_id=t.id')
