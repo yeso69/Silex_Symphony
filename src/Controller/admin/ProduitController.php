@@ -248,6 +248,7 @@ class ProduitController implements ControllerProviderInterface
 //            $dir='C:\UwAmp\www\Silex_Symphonyy\web\assets\img';
 //            var_dump($form);
 //            $donnees['photo']->move($dir, $donnees['photo']);
+            var_dump($donnees);die();
             $this->ProduitModel = new ProduitModel($app);
             $this->ProduitModel->updateProduit($donnees);
             return $app->redirect($app["url_generator"]->generate("admin.produit.index"));

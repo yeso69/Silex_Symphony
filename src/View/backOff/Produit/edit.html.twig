@@ -1,7 +1,10 @@
 {% extends "layout.html.twig" %}
 {% block contenu %}
 	<div class="container">
+        <form action="#" method="post">
         {{ form_widget(form) }}
+        <input type="submit" name="submit" />
+        </form>
 	{#<form method="post" action="{{ path("admin.produit.validFormEdit", {id: donnees.id}) }}">#}
 		{#<div class="form-group">#}
 			{#<fieldset>#}
