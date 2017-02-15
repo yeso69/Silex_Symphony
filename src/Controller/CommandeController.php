@@ -46,8 +46,8 @@ class CommandeController implements ControllerProviderInterface
             }
         }
         return $app->redirect($app["url_generator"]->generate("panier.show"));
-    }
 
+}
     public function remove(Application $app, $id) {
         if(isset($id)){
             $panier = $app['session']->get('panier');

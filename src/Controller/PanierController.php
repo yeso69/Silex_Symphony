@@ -73,8 +73,11 @@ class PanierController implements ControllerProviderInterface
         if(count($panier) > 0) { // si ce n'est pas un panier vide
             foreach ($panier as $id => $qte) {
                 $produit = $this->produitModel->getProduit($id);
-                $produit['qte'] = $qte;//ajout de la qte pr chaque produit
-                array_push($produits, $produit);//ajout du produit dans le tableau
+                $produiStock = $this->panierModel->getStockProd($id);
+                if ($produiStock >0){
+                    $produit['qte'] = $qte;//ajout de la qte pr chaque produit
+                    array_push($produits, $produit);//ajout du produit dans le tableau
+                }
             }
         }
         //var_dump($produits);die();
@@ -90,7 +93,9 @@ class PanierController implements ControllerProviderInterface
             $panier[$id]= 1;
         }
         else{
-            if(isset($panier[$id]))
+            $this->panierModel = new PanierModel($app);
+            $produitStock = $this->panierModel->getStockProd($id);
+            if(isset($panier[$id]) && $produitStock>0)
                 $panier[$id]+= 1;
             else
                 $panier[$id] = 1;
