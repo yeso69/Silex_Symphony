@@ -2,6 +2,6 @@
 define("hostname","localhost"); // ou serveurmysql
 
 define("database","phpavance");
-define("username","phpavance");
-define("password","phpavance");
+define("username","root");
+define("password","root");
 
