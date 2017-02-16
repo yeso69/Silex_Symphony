@@ -38,10 +38,7 @@ class PanierController implements ControllerProviderInterface
             $id = $_POST['id'];
             $qte = $_POST['qte'];
             $panier = $app['session']->get('panier');
-            var_dump($produiStock[0]['stock']);
-            var_dump("test   "+$qte);
             $totalStock = $produiStock[0]['stock']-$qte;
-            var_dump($totalStock);
             if($qte > 0 && isset($panier[$id]) && $totalStock >=0) {
                 $panier[$id] = $qte;
                 $app['session']->set('panier',$panier);
@@ -98,7 +95,6 @@ class PanierController implements ControllerProviderInterface
         $produitStock = $this->panierModel->getStockProd($id);
         //var_dump($panier);var_dump($produitStock[0]['stock']>0);die;
         if($panier == null && $produitStock[0]['stock']>0 == true){
-            var_dump("test");
             $panier = array();
             $panier[$id]= 1;
             $app['session']->set('panier', $panier);

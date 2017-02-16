@@ -29,8 +29,6 @@ class UserController implements ControllerProviderInterface {
 		return $this->connexionUser($app);
 	}
     public function captcha(Application $app, $code){
-        var_dump($app['session']->get('random_number'));
-        var_dump(strtolower($code));
         if($code || @strtolower($code) == strtolower($app['session']->get('random_number')))
         {
 
@@ -87,7 +85,6 @@ class UserController implements ControllerProviderInterface {
             $this->userModel = new UserModel($app);
             $donnees = $form->getData();
             $captchaIsGood = $this->captcha($app, $_POST['code']);
-            var_dump($captchaIsGood);
             $data=$this->userModel->verif_login_mdp_Utilisateur($donnees['login'],$donnees['password']);
             if($data != NULL && $captchaIsGood == 1)//si l'authentification est ok on met les infos utilisateur en session
             {
@@ -203,6 +200,11 @@ class UserController implements ControllerProviderInterface {
         // display the form
         return $app['twig']->render('register.html.twig', array('form' => $form->createView()));
 
+    }
+    public function codageMdp($pwd){
+        $encoder = new BCryptPasswordEncoder(13);
+        $hash = $encoder->encodePassword($pwd, '');
+        dump("$hash");die();
     }
 
     public function modifier(Application $app, Request $req){//Modifier mon compte
