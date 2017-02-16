@@ -99,12 +99,18 @@ class CommandeController implements ControllerProviderInterface
         // boucle qui va recupérer les infos des produits dans le panier et calcul du total
         foreach ($panier as $id => $qte){
             $produit = $this->produitModel->getProduit($id);
-            $produit['produit_id'] = $id;//format pr le model
-            $produit['quantite'] = $qte;
-            $produit['stock'] -= $qte;
-            $this->produitModel->changeStock($produit);
-            array_push($produits, $produit);//ajout du produit dans le tableau
-            $total += $qte * $produit['prix'];
+            $produitStock = $this->panierModel->getStockProd($id);
+            if ($produitStock>0 || $produitStock - $qte>  0 ){
+                $produit['produit_id'] = $id;//format pr le model
+                $produit['quantite'] = $qte;
+                $produit['stock'] -= $qte;
+                $this->produitModel->changeStock($produit);
+                array_push($produits, $produit);//ajout du produit dans le tableau
+                $total += $qte * $produit['prix'];
+            }else{
+                $app['session']->getFlashBag()->add('notifications',
+                    array('type' => 'info', 'message' => ' Stock trop faible'));
+            }
         }
 
 

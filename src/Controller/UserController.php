@@ -28,10 +28,10 @@ class UserController implements ControllerProviderInterface {
 	public function index(Application $app) {
 		return $this->connexionUser($app);
 	}
-    public function captcha($code){
-        var_dump($_SESSION['random_number']);
+    public function captcha(Application $app, $code){
+        var_dump($app['session']->get('random_number'));
         var_dump(strtolower($code));
-        if($code || @strtolower($code) == strtolower($_SESSION['random_number']))
+        if($code || @strtolower($code) == strtolower($app['session']->get('random_number')))
         {
 
             // insert your name , email and text message to your table in db
@@ -86,7 +86,7 @@ class UserController implements ControllerProviderInterface {
         if ($form->isSubmitted() && $form->isValid()) {//Si le formulaire est ok on vérifie si les logins existent et sont ok
             $this->userModel = new UserModel($app);
             $donnees = $form->getData();
-            $captchaIsGood = $this->captcha($_POST['code']);
+            $captchaIsGood = $this->captcha($app, $_POST['code']);
             var_dump($captchaIsGood);
             $data=$this->userModel->verif_login_mdp_Utilisateur($donnees['login'],$donnees['password']);
             if($data != NULL && $captchaIsGood == 1)//si l'authentification est ok on met les infos utilisateur en session

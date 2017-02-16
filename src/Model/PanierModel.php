@@ -61,7 +61,8 @@ class PanierModel {
         $queryBuilder
             ->select('stock')
             ->from('produits', 'p')
-            ->where('id= :id');
+            ->where('id= ?')
+            ->setParameter(0, $id);
         return $queryBuilder->execute()->fetchAll();
     }
     public function updateProduit($donnees) {
