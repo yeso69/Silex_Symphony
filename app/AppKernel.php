@@ -74,6 +74,18 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
     )
 ));
 
+
+$app->before(function (\Symfony\Component\HttpFoundation\Request $request) use ($app) {
+    $bind = $request->get("_route");
+    $controller = explode('.', $bind)[0];
+    if ($controller == 'admin') {
+        if($app['session']->get('roles') != 'ROLE_ADMIN')
+            return $app->redirect($app['url_generator']->generate('user.login'));
+    }
+
+
+});
+
 // Montage des controleurs sur le routeur
 include('routing.php');
 
