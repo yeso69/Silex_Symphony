@@ -56,7 +56,15 @@ class PanierModel {
             ->where('commande_id= :id');
         return $queryBuilder->execute()->fetchAll();
     }
-
+    public function getStockProd($id) {
+        $queryBuilder = new QueryBuilder($this->db);
+        $queryBuilder
+            ->select('stock')
+            ->from('produits', 'p')
+            ->where('id= ?')
+            ->setParameter(0, $id);
+        return $queryBuilder->execute()->fetchAll();
+    }
     public function updateProduit($donnees) {
         $queryBuilder = new QueryBuilder($this->db);
         $queryBuilder

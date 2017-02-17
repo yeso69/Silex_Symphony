@@ -28,11 +28,31 @@ class UserController implements ControllerProviderInterface {
 	public function index(Application $app) {
 		return $this->connexionUser($app);
 	}
+    public function captcha(Application $app, $code){
+        if($code || @strtolower($code) == strtolower($app['session']->get('random_number')))
+        {
+
+            // insert your name , email and text message to your table in db
+
+            return 1;// submitted
+
+        }
+        else
+        {
+            return 0; // invalid code
+        }
+    }
+    public function initcaptcha(){
+        $string = '';
+        for ($i = 0; $i < 5; $i++) {
+            $string .= chr(rand(97, 122));
+        }
+        return $string;
+    }
 
 	public function connexionUser(Application $app, Request $req)//Connexion utilisateur
 	{
 //		return $app["twig"]->render('login.html.twig');
-
         $app->register(new FormServiceProvider());
         $app->register(new CsrfServiceProvider());
         $app->register(new ValidatorServiceProvider());
@@ -40,7 +60,8 @@ class UserController implements ControllerProviderInterface {
             'translator.domains' => array(),
             'locale'            => 'fr',
         ));
-
+        $cap = $this->initcaptcha();
+        $app['session']->set('random_number', $cap);
         //création du formulaire de conexion
         $form = $app['form.factory']->createBuilder(FormType::class)
             ->add('login', TextType::class, array(
@@ -63,10 +84,9 @@ class UserController implements ControllerProviderInterface {
         if ($form->isSubmitted() && $form->isValid()) {//Si le formulaire est ok on vérifie si les logins existent et sont ok
             $this->userModel = new UserModel($app);
             $donnees = $form->getData();
-
+            $captchaIsGood = $this->captcha($app, $_POST['code']);
             $data=$this->userModel->verif_login_mdp_Utilisateur($donnees['login'],$donnees['password']);
-
-            if($data != NULL)//si l'authentification est ok on met les infos utilisateur en session
+            if($data != NULL && $captchaIsGood == 1)//si l'authentification est ok on met les infos utilisateur en session
             {
                 $app['session']->set('roles', $data['roles']);  //dans twig {{ app.session.get('roles') }}
                 $app['session']->set('username', $data['username']);
@@ -74,6 +94,7 @@ class UserController implements ControllerProviderInterface {
                 $app['session']->set('lname', $data['lname']);
                 $app['session']->set('logged', 1);
                 $app['session']->set('user_id', $data['id']);
+
                 $app['session']->getFlashBag()->add('notifications',
                     array('type' => 'success', 'message' =>'Bienvenue '.$data['username'].', vous être désormais connecté !'));
                 return $app->redirect($app["url_generator"]->generate("accueil"));
@@ -81,12 +102,12 @@ class UserController implements ControllerProviderInterface {
             else
             {
                 $app['session']->getFlashBag()->add('notifications',
-                    array('type' => 'danger', 'message' =>'Login ou mot de passe incorrect !'));
+                    array('type' => 'danger', 'message' =>'Login, mot de passe ou captcha incorrect !'));
             }
         }
 
         // display the form
-        return $app['twig']->render('login.html.twig', array( 'form' => $form->createView() ));
+        return $app['twig']->render('login.html.twig', array('cap' => $cap, 'form' => $form->createView()));
 	}
 
     public function register(Application $app, Request $req){//Incription
@@ -176,10 +197,14 @@ class UserController implements ControllerProviderInterface {
                 array('type' => 'success', 'message' =>'Vous êtes désormais inscrit, connectez-vous !'));
             return $app->redirect($app["url_generator"]->generate("user.login"));
         }
-
         // display the form
         return $app['twig']->render('register.html.twig', array('form' => $form->createView()));
 
+    }
+    public function codageMdp($pwd){
+        $encoder = new BCryptPasswordEncoder(13);
+        $hash = $encoder->encodePassword($pwd, '');
+        dump("$hash");die();
     }
 
     public function modifier(Application $app, Request $req){//Modifier mon compte
@@ -310,6 +335,7 @@ class UserController implements ControllerProviderInterface {
 	public function connect(Application $app) {
 		$controllers = $app['controllers_factory'];
 		$controllers->match('/', 'App\Controller\UserController::index')->bind('user.index');
+        $controllers->get('/logincap', 'App\Controller\UserController::initcaptcha')->bind('user.initcaptcha');
 		$controllers->get('/login', 'App\Controller\UserController::connexionUser')->bind('user.login');
 		$controllers->post('/login', 'App\Controller\UserController::connexionUser')->bind('user.validFormlogin');
         $controllers->get('/compte', 'App\Controller\UserController::modifier')->bind('user.edit');

@@ -32,12 +32,14 @@ class PanierController implements ControllerProviderInterface
     }
 
     public function update(Application $app) {
-        if(isset($_POST['qte'] ) && isset($_POST['id'])){
+        $this->panierModel = new PanierModel($app);
+        if(isset($_POST['qte'] ) && isset($_POST['id']) ){
+            $produiStock = $this->panierModel->getStockProd($_POST['id']);
             $id = $_POST['id'];
             $qte = $_POST['qte'];
             $panier = $app['session']->get('panier');
-
-            if($qte > 0 && isset($panier[$id])) {
+            $totalStock = $produiStock[0]['stock']-$qte;
+            if($qte > 0 && isset($panier[$id]) && $totalStock >=0) {
                 $panier[$id] = $qte;
                 $app['session']->set('panier',$panier);
             }
@@ -73,8 +75,11 @@ class PanierController implements ControllerProviderInterface
         if(count($panier) > 0) { // si ce n'est pas un panier vide
             foreach ($panier as $id => $qte) {
                 $produit = $this->produitModel->getProduit($id);
-                $produit['qte'] = $qte;//ajout de la qte pr chaque produit
-                array_push($produits, $produit);//ajout du produit dans le tableau
+                $produiStock = $this->panierModel->getStockProd($id);
+                if ($produiStock >0){
+                    $produit['qte'] = $qte;//ajout de la qte pr chaque produit
+                    array_push($produits, $produit);//ajout du produit dans le tableau
+                }
             }
         }
         //var_dump($produits);die();
@@ -84,23 +89,35 @@ class PanierController implements ControllerProviderInterface
 
     public function add(Application $app, $id, Request $req) {
         $panier = $app['session']->get('panier');
-
-        if($panier == null){
+        $this->produitModel = new ProduitModel($app);
+        $this->panierModel = new PanierModel($app);
+        $produit = $this->produitModel->getProduit($id);
+        $produitStock = $this->panierModel->getStockProd($id);
+        //var_dump($panier);var_dump($produitStock[0]['stock']>0);die;
+        if($panier == null && $produitStock[0]['stock']>0 == true){
             $panier = array();
             $panier[$id]= 1;
+            $app['session']->set('panier', $panier);
+            $app['session']->getFlashBag()->add('notifications',
+                array('type' => 'info', 'message' => $produit['nom'] . ' a été ajouté à votre panier !'));
         }
         else{
-            if(isset($panier[$id]))
-                $panier[$id]+= 1;
-            else
-                $panier[$id] = 1;
-        }
-        $this->produitModel = new ProduitModel($app);
-        $produit = $this->produitModel->getProduit($id);
-        $app['session']->getFlashBag()->add('notifications',
-            array('type' => 'info', 'message' => $produit['nom'].' a été ajouté à votre panier !'));
+            if($produitStock[0]['stock']>0 && $produit['stock']>0) {
+                if (isset($panier[$id])) {
+                    $panier[$id] += 1;
+                } else {
+                    $panier[$id] = 1;
+                }
+                $app['session']->getFlashBag()->add('notifications',
+                    array('type' => 'info', 'message' => $produit['nom'] . ' a été ajouté à votre panier !'));
 
-        $app['session']->set('panier',$panier);
+                $app['session']->set('panier', $panier);
+            }else{
+                $app['session']->getFlashBag()->add('notifications',
+                    array('type' => 'info', 'message' => 'Stock trop faible'));
+            }
+
+        }
         //var_dump($panier);die();
         return $app->redirect($req->headers->get('referer'));
     }
